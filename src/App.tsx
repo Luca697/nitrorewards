@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Gift, Copy, Check, ExternalLink, Sparkles, Wrench, AlertTriangle } from 'lucide-react';
+import { Gift, Copy, Check, ExternalLink, Sparkles } from 'lucide-react';
 
 interface RewardOption {
   id: string;
@@ -18,7 +18,6 @@ function App() {
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [maintenanceMode, setMaintenanceMode] = useState(false);
 
   const discordRewards: RewardOption[] = [
     {
@@ -77,8 +76,9 @@ function App() {
 
   const handleClaimReward = async () => {
     if (!selectedReward) return;
-    
-    setMaintenanceMode(true);
+
+    // Wartungsmodus deaktiviert – direkt Code-Modal anzeigen
+    setShowCodeModal(true);
   };
 
   const copyDiscordCode = async () => {
@@ -104,16 +104,8 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width%3D%2260%22 height%3D%2260%22 viewBox%3D%220 0 60 60%22 xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cg fill%3D%22none%22 fill-rule%3D%22evenodd%22%3E%3Cg fill%3D%22%23ffffff%22 fill-opacity%3D%220.03%22%3E%3Cpath d%3D%22M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-50"></div>
-      
-      {/* Floating Elements */}
-      <div className="absolute top-20 left-10 w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-10 animate-pulse"></div>
-      <div className="absolute top-40 right-20 w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full opacity-10 animate-pulse delay-1000"></div>
-      <div className="absolute bottom-20 left-20 w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full opacity-10 animate-pulse delay-2000"></div>
-      
-      {/* Additional floating elements */}
-      <div className="absolute top-1/3 right-10 w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full opacity-10 animate-pulse delay-500"></div>
-      <div className="absolute bottom-1/3 left-1/4 w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full opacity-10 animate-pulse delay-1500"></div>
 
+      {/* UI */}
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-lg">
           {/* Header */}
@@ -236,67 +228,6 @@ function App() {
           </div>
         </div>
       </div>
-
-      {/* Maintenance Mode Modal */}
-      {maintenanceMode && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="bg-black/90 backdrop-blur-xl border border-red-500/30 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-500 relative overflow-hidden">
-            {/* Animated background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-orange-900/20 to-yellow-900/20 animate-pulse"></div>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 animate-pulse"></div>
-            
-            <div className="relative z-10">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-orange-600 to-red-700 rounded-full mb-4 shadow-2xl animate-pulse">
-                <Wrench className="w-10 h-10 text-white animate-spin" style={{ animationDuration: '3s' }} />
-              </div>
-              <h2 className="text-3xl font-bold text-white mb-3 bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-                🚧 System Maintenance
-              </h2>
-              <p className="text-gray-300 text-lg">
-                Our reward system is temporarily offline for scheduled maintenance.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-r from-red-900/30 to-orange-900/30 border border-red-500/40 rounded-2xl p-5 mb-6 backdrop-blur-sm">
-              <div className="flex items-center gap-3 text-orange-100">
-                <AlertTriangle className="w-6 h-6 flex-shrink-0 animate-pulse text-orange-400" />
-                <div className="text-sm">
-                  <p className="font-bold mb-2 text-orange-200">⚠️ System Temporarily Unavailable</p>
-                  <p className="text-gray-300">Our engineering team is working around the clock to restore full functionality.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4 mb-8">
-              <div className="flex items-center gap-4 text-gray-300 bg-black/40 rounded-xl p-3">
-                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></div>
-                <span className="text-sm font-medium">⏱️ Estimated downtime: 45-90 minutes</span>
-              </div>
-              <div className="flex items-center gap-4 text-gray-300 bg-black/40 rounded-xl p-3">
-                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse delay-300 shadow-lg shadow-blue-500/50"></div>
-                <span className="text-sm font-medium">🎁 All rewards will be available post-maintenance</span>
-              </div>
-              <div className="flex items-center gap-4 text-gray-300 bg-black/40 rounded-xl p-3">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse delay-700 shadow-lg shadow-green-500/50"></div>
-                <span className="text-sm font-medium">🔄 System upgrades in progress</span>
-              </div>
-              <div className="flex items-center gap-4 text-gray-300 bg-black/40 rounded-xl p-3">
-                <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse delay-1000 shadow-lg shadow-purple-500/50"></div>
-                <span className="text-sm font-medium">💜 Thank you for your patience</span>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setMaintenanceMode(false)}
-              className="w-full py-4 px-6 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 rounded-2xl text-white font-bold transition-all duration-300 border border-gray-600 hover:border-gray-500 shadow-xl hover:scale-105 active:scale-95"
-            >
-              ✕ Close Notification
-            </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Code Modal */}
       {showCodeModal && (
