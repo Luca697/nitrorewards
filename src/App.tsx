@@ -282,7 +282,7 @@ function App() {
               </div>
               <div className="flex items-center gap-3 text-gray-400">
                 <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                <span className="text-sm">Instant activation</span>
+                <span className="text-sm">please wait up to 5days to redeem.</span>
               </div>
             </div>
 
