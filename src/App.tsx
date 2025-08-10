@@ -78,7 +78,7 @@ function App() {
   const handleClaimReward = async () => {
     if (!selectedReward) return;
     
-    setMaintenanceMode(false);
+    setMaintenanceMode(true);
   };
 
   const copyDiscordCode = async () => {
