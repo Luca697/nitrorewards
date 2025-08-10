@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Gift, Copy, Check, ExternalLink, Sparkles } from 'lucide-react';
+import { Gift, Copy, Check, ExternalLink, Sparkles, Wrench, AlertTriangle } from 'lucide-react';
 
 interface RewardOption {
   id: string;
@@ -18,6 +18,7 @@ function App() {
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
 
   const discordRewards: RewardOption[] = [
     {
@@ -77,15 +78,17 @@ function App() {
   const handleClaimReward = async () => {
     if (!selectedReward) return;
     
-    setIsProcessing(true);
-    // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsProcessing(false);
-    setShowCodeModal(true);
+    setMaintenanceMode(true);
   };
 
   const copyDiscordCode = async () => {
     await navigator.clipboard.writeText('discord.gift/vhfihv54geh');
+    setCodeCopied(true);
+    setTimeout(() => setCodeCopied(false), 2000);
+  };
+
+  const copyRobuxCode = async () => {
+    await navigator.clipboard.writeText('RBX1-7HSB63-117HH');
     setCodeCopied(true);
     setTimeout(() => setCodeCopied(false), 2000);
   };
@@ -230,6 +233,57 @@ function App() {
         </div>
       </div>
 
+      {/* Maintenance Mode Modal */}
+      {maintenanceMode && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-300">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full mb-4">
+                <Wrench className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Maintenance Mode
+              </h2>
+              <p className="text-gray-300">
+                Our reward system is currently under maintenance. Please try again later.
+              </p>
+            </div>
+
+            <div className="bg-orange-500/20 border border-orange-500/30 rounded-2xl p-4 mb-6">
+              <div className="flex items-center gap-3 text-orange-200">
+                <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="font-semibold mb-1">System Temporarily Unavailable</p>
+                  <p>We're working to restore service as quickly as possible.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3 mb-6">
+              <div className="flex items-center gap-3 text-gray-300">
+                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                <span className="text-sm">Estimated downtime: 30-60 minutes</span>
+              </div>
+              <div className="flex items-center gap-3 text-gray-300">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-300"></div>
+                <span className="text-sm">All rewards will be available after maintenance</span>
+              </div>
+              <div className="flex items-center gap-3 text-gray-300">
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-700"></div>
+                <span className="text-sm">Thank you for your patience</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setMaintenanceMode(false)}
+              className="w-full py-3 px-6 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 rounded-2xl text-white font-semibold transition-all duration-200"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Code Modal */}
       {showCodeModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -249,23 +303,25 @@ function App() {
             <div className="bg-black/30 rounded-2xl p-4 mb-6">
               <div className="text-center">
                 <div className="text-2xl font-mono font-bold text-white mb-2 select-all">
-                  discord.gift/vhfihv54geh
+                  {selectedTab === 'discord' ? 'discord.gift/vhfihv54geh' : 'RBX1-7HSB63-117HH'}
                 </div>
                 <div className="flex gap-2 justify-center">
                   <button
-                    onClick={copyDiscordCode}
+                    onClick={selectedTab === 'discord' ? copyDiscordCode : copyRobuxCode}
                     className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-all duration-200"
                   >
                     {codeCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                     {codeCopied ? 'Copied!' : 'Copy'}
                   </button>
-                  <button
-                    onClick={openDiscordGift}
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white transition-all duration-200"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Redeem
-                  </button>
+                  {selectedTab === 'discord' && (
+                    <button
+                      onClick={openDiscordGift}
+                      className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white transition-all duration-200"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Redeem
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
