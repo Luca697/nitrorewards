@@ -9,38 +9,29 @@ export default function App() {
   const [codeCopied, setCodeCopied] = useState(false);
   const [videoLiked, setVideoLiked] = useState(false);
   const [channelSubscribed, setChannelSubscribed] = useState(false);
-  const [videoCommented, setVideoCommented] = useState(false);
   const [commentText, setCommentText] = useState('');
 
   const rewards = {
-    discord: ['Free Nitro 1 Month', 'Free Nitro 3 Months', 'Free Nitro 1 Year'],
-    robux: ['100 Robux', '500 Robux', '1000 Robux']
-  };
-
-  const rewardCodes: Record<string, string> = {
-    'Free Nitro 1 Month': 'NITRO1M-1234',
-    'Free Nitro 3 Months': 'NITRO3M-5678',
-    'Free Nitro 1 Year': 'NITRO1Y-9012',
-    '100 Robux': 'ROBUX100-ABCD',
-    '500 Robux': 'ROBUX500-EFGH',
-    '1000 Robux': 'ROBUX1000-IJKL'
-  };
-
-  const handleRewardClick = (reward: string) => {
-    setSelectedReward(reward);
-    setShowVerificationModal(true);
+    discord: [
+      { id: '1', name: 'Nitro Basic', code: 'DISCORD-NITRO-1234' },
+      { id: '2', name: 'Nitro Classic', code: 'DISCORD-CLASSIC-5678' },
+    ],
+    robux: [
+      { id: '3', name: '100 Robux', code: 'ROBUX-100-9876' },
+      { id: '4', name: '500 Robux', code: 'ROBUX-500-5432' },
+    ],
   };
 
   const openYouTubeVideo = () => {
     window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
   };
 
-  const handleLikeVideo = () => setVideoLiked(true);
-  const handleSubscribeChannel = () => setChannelSubscribed(true);
-  const handleCommentVideo = () => {
-    if (commentText.trim() !== '') {
-      setVideoCommented(true);
-    }
+  const handleLikeVideo = () => {
+    setVideoLiked(true);
+  };
+
+  const handleSubscribeChannel = () => {
+    setChannelSubscribed(true);
   };
 
   const handleVerificationComplete = () => {
@@ -57,42 +48,48 @@ export default function App() {
     setShowCodeModal(true);
   };
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(rewardCodes[selectedReward]);
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
     setCodeCopied(true);
     setTimeout(() => setCodeCopied(false), 2000);
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Free Rewards</h1>
-
-        {/* Tabs */}
-        <div className="flex gap-4 mb-6">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
+      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-4 text-center">Reward System</h1>
+        <div className="flex justify-center mb-6">
           <button
+            className={`px-4 py-2 rounded-l-lg ${
+              selectedTab === 'discord' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+            }`}
             onClick={() => setSelectedTab('discord')}
-            className={`px-4 py-2 rounded-lg ${selectedTab === 'discord' ? 'bg-blue-500' : 'bg-gray-700'}`}
           >
-            Discord Nitro
+            Discord
           </button>
           <button
+            className={`px-4 py-2 rounded-r-lg ${
+              selectedTab === 'robux' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+            }`}
             onClick={() => setSelectedTab('robux')}
-            className={`px-4 py-2 rounded-lg ${selectedTab === 'robux' ? 'bg-green-500' : 'bg-gray-700'}`}
           >
             Robux
           </button>
         </div>
 
-        {/* Rewards List */}
-        <div className="grid grid-cols-1 gap-4">
+        <div className="space-y-3">
           {rewards[selectedTab].map((reward) => (
             <div
-              key={reward}
-              className="p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700"
-              onClick={() => handleRewardClick(reward)}
+              key={reward.id}
+              className={`p-4 border rounded-lg cursor-pointer ${
+                selectedReward === reward.id ? 'border-blue-500' : 'border-gray-300'
+              }`}
+              onClick={() => {
+                setSelectedReward(reward.id);
+                setShowVerificationModal(true);
+              }}
             >
-              {reward}
+              {reward.name}
             </div>
           ))}
         </div>
@@ -101,7 +98,7 @@ export default function App() {
       {/* Verification Modal */}
       {showVerificationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full text-black">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
             <h2 className="text-xl font-bold mb-4">Verification Required</h2>
             <p className="mb-4">
               Please like the video, subscribe to the channel, and comment "Nice video" to continue.
@@ -162,16 +159,24 @@ export default function App() {
       {/* Code Modal */}
       {showCodeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full text-black">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full text-center">
             <h2 className="text-xl font-bold mb-4">Your Reward Code</h2>
-            <div className="p-4 bg-gray-200 rounded-lg font-mono text-lg mb-4">
-              {rewardCodes[selectedReward]}
-            </div>
+            <p className="mb-4 text-lg">
+              {rewards[selectedTab].find((r) => r.id === selectedReward)?.code}
+            </p>
             <button
-              onClick={handleCopyCode}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+              onClick={() =>
+                handleCopyCode(rewards[selectedTab].find((r) => r.id === selectedReward)?.code || '')
+              }
+              className="px-4 py-2 bg-green-500 text-white rounded-lg"
             >
               {codeCopied ? 'Copied!' : 'Copy Code'}
+            </button>
+            <button
+              onClick={() => setShowCodeModal(false)}
+              className="ml-3 px-4 py-2 bg-gray-500 text-white rounded-lg"
+            >
+              Close
             </button>
           </div>
         </div>
