@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Gift, Copy, Check, ExternalLink, Sparkles } from 'lucide-react';
+import { Gift, Copy, Check, ExternalLink, Sparkles, Heart, UserPlus, Play } from 'lucide-react';
 
 interface RewardOption {
   id: string;
@@ -16,8 +16,10 @@ function App() {
   const [selectedTab, setSelectedTab] = useState<'discord' | 'robux'>('discord');
   const [selectedReward, setSelectedReward] = useState<string>('');
   const [showCodeModal, setShowCodeModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [videoLiked, setVideoLiked] = useState(false);
+  const [channelSubscribed, setChannelSubscribed] = useState(false);
 
   const discordRewards: RewardOption[] = [
     {
@@ -76,9 +78,26 @@ function App() {
 
   const handleClaimReward = async () => {
     if (!selectedReward) return;
+    setShowVerificationModal(true);
+  };
 
-    // Wartungsmodus deaktiviert – direkt Code-Modal anzeigen
-    setShowCodeModal(true);
+  const handleVerificationComplete = () => {
+    if (videoLiked && channelSubscribed) {
+      setShowVerificationModal(false);
+      setShowCodeModal(true);
+    }
+  };
+
+  const openTikTokVideo = () => {
+    window.open('https://www.tiktok.com/@example/video/1234567890', '_blank');
+  };
+
+  const handleLikeVideo = () => {
+    setVideoLiked(true);
+  };
+
+  const handleSubscribeChannel = () => {
+    setChannelSubscribed(true);
   };
 
   const copyDiscordCode = async () => {
@@ -205,21 +224,14 @@ function App() {
             {/* Claim Button */}
             <button
               onClick={handleClaimReward}
-              disabled={!selectedReward || isProcessing}
+              disabled={!selectedReward}
               className={`w-full py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-300 shadow-xl ${
-                selectedReward && !isProcessing
+                selectedReward
                   ? 'bg-gradient-to-r from-purple-700 to-blue-700 hover:from-purple-600 hover:to-blue-600 text-white hover:shadow-2xl hover:scale-105 active:scale-95 border border-purple-600/30'
                   : 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
               }`}
             >
-              {isProcessing ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  Processing...
-                </div>
-              ) : (
-                `✨ Claim ${selectedRewardData?.title || 'Reward'}`
-              )}
+              ✨ Claim {selectedRewardData?.title || 'Reward'}
             </button>
 
             <p className="text-center text-gray-500 text-sm mt-4">
@@ -228,6 +240,96 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* TikTok Verification Modal */}
+      {showVerificationModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-black/90 backdrop-blur-xl border border-gray-700/50 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-300 relative overflow-hidden">
+            {/* Animated top border */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 animate-pulse"></div>
+            
+            <div className="relative text-center mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full mb-4">
+                <Play className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent mb-2">
+                Complete Verification
+              </h2>
+              <p className="text-gray-300">
+                Complete these steps to claim your reward
+              </p>
+            </div>
+
+            <div className="relative bg-black/60 rounded-2xl p-4 mb-6 border border-gray-800">
+              <div className="space-y-4">
+                <div className="text-center mb-4">
+                  <button
+                    onClick={openTikTokVideo}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 rounded-xl text-white font-semibold transition-all duration-200 border border-pink-500/30"
+                  >
+                    <Play className="w-4 h-4" />
+                    Watch TikTok Video
+                  </button>
+                </div>
+                
+                <div className="space-y-3">
+                  <button
+                    onClick={handleLikeVideo}
+                    disabled={videoLiked}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${
+                      videoLiked
+                        ? 'bg-green-600/20 border border-green-500/50 text-green-400'
+                        : 'bg-gray-800/50 border border-gray-700 text-gray-300 hover:bg-gray-700/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Heart className={`w-5 h-5 ${videoLiked ? 'fill-current' : ''}`} />
+                      <span>Like the video</span>
+                    </div>
+                    {videoLiked && <Check className="w-5 h-5" />}
+                  </button>
+                  
+                  <button
+                    onClick={handleSubscribeChannel}
+                    disabled={channelSubscribed}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${
+                      channelSubscribed
+                        ? 'bg-green-600/20 border border-green-500/50 text-green-400'
+                        : 'bg-gray-800/50 border border-gray-700 text-gray-300 hover:bg-gray-700/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <UserPlus className="w-5 h-5" />
+                      <span>Subscribe to channel</span>
+                    </div>
+                    {channelSubscribed && <Check className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowVerificationModal(false)}
+                className="flex-1 py-3 px-6 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 rounded-2xl text-white font-semibold transition-all duration-200 border border-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleVerificationComplete}
+                disabled={!videoLiked || !channelSubscribed}
+                className={`flex-1 py-3 px-6 rounded-2xl font-semibold transition-all duration-200 ${
+                  videoLiked && channelSubscribed
+                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white border border-green-500/30'
+                    : 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
+                }`}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Code Modal */}
       {showCodeModal && (
