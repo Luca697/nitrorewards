@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Play } from 'lucide-react';
 
 export default function App() {
@@ -13,29 +13,22 @@ export default function App() {
 
   const rewards = {
     discord: [
-      { id: '1', name: 'Nitro Basic', code: 'DISCORD-NITRO-1234' },
-      { id: '2', name: 'Nitro Classic', code: 'DISCORD-CLASSIC-5678' },
+      { name: '1 Month Discord Nitro', code: 'NITRO1M-CODE-1234' },
+      { name: '1 Year Discord Nitro', code: 'NITRO1Y-CODE-5678' },
     ],
     robux: [
-      { id: '3', name: '100 Robux', code: 'ROBUX-100-9876' },
-      { id: '4', name: '500 Robux', code: 'ROBUX-500-5432' },
+      { name: '800 Robux', code: 'ROBUX800-CODE-9999' },
+      { name: '1700 Robux', code: 'ROBUX1700-CODE-8888' },
     ],
   };
 
-  const openYouTubeVideo = () => {
-    window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
-  };
-
-  const handleLikeVideo = () => {
-    setVideoLiked(true);
-  };
-
-  const handleSubscribeChannel = () => {
-    setChannelSubscribed(true);
+  const handleRewardClick = (reward: string) => {
+    setSelectedReward(reward);
+    setShowVerificationModal(true);
   };
 
   const handleVerificationComplete = () => {
-    if (videoLiked && channelSubscribed && commentText.trim() !== '') {
+    if (videoLiked && channelSubscribed && commentText.trim()) {
       setShowVerificationModal(false);
       setShowCodeModal(true);
     } else {
@@ -43,65 +36,66 @@ export default function App() {
     }
   };
 
+  // NEW: Skip verification
   const handleSkipVerification = () => {
     setShowVerificationModal(false);
     setShowCodeModal(true);
   };
 
-  const handleCopyCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    setCodeCopied(true);
-    setTimeout(() => setCodeCopied(false), 2000);
+  const handleCopyCode = () => {
+    const reward = rewards[selectedTab].find(r => r.name === selectedReward);
+    if (reward) {
+      navigator.clipboard.writeText(reward.code);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
-      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">Reward System</h1>
-        <div className="flex justify-center mb-6">
-          <button
-            className={`px-4 py-2 rounded-l-lg ${
-              selectedTab === 'discord' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-            }`}
-            onClick={() => setSelectedTab('discord')}
-          >
-            Discord
-          </button>
-          <button
-            className={`px-4 py-2 rounded-r-lg ${
-              selectedTab === 'robux' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-            }`}
-            onClick={() => setSelectedTab('robux')}
-          >
-            Robux
-          </button>
-        </div>
+  const openYouTubeVideo = () => {
+    window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+  };
 
-        <div className="space-y-3">
-          {rewards[selectedTab].map((reward) => (
-            <div
-              key={reward.id}
-              className={`p-4 border rounded-lg cursor-pointer ${
-                selectedReward === reward.id ? 'border-blue-500' : 'border-gray-300'
-              }`}
-              onClick={() => {
-                setSelectedReward(reward.id);
-                setShowVerificationModal(true);
-              }}
-            >
-              {reward.name}
-            </div>
-          ))}
-        </div>
+  const handleLikeVideo = () => setVideoLiked(true);
+  const handleSubscribeChannel = () => setChannelSubscribed(true);
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-6">
+      <h1 className="text-3xl font-bold mb-6">Free Rewards</h1>
+      
+      <div className="flex gap-4 mb-6">
+        <button
+          onClick={() => setSelectedTab('discord')}
+          className={`px-4 py-2 rounded-lg ${selectedTab === 'discord' ? 'bg-blue-500' : 'bg-gray-700'}`}
+        >
+          Discord
+        </button>
+        <button
+          onClick={() => setSelectedTab('robux')}
+          className={`px-4 py-2 rounded-lg ${selectedTab === 'robux' ? 'bg-green-500' : 'bg-gray-700'}`}
+        >
+          Robux
+        </button>
+      </div>
+
+      <div className="grid gap-4 w-full max-w-md">
+        {rewards[selectedTab].map((reward) => (
+          <div
+            key={reward.name}
+            onClick={() => handleRewardClick(reward.name)}
+            className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 cursor-pointer"
+          >
+            {reward.name}
+          </div>
+        ))}
       </div>
 
       {/* Verification Modal */}
       {showVerificationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+          <div className="bg-white text-black p-6 rounded-lg shadow-lg max-w-lg w-full">
             <h2 className="text-xl font-bold mb-4">Verification Required</h2>
             <p className="mb-4">
-              Please like the video, subscribe to the channel, and comment "Nice video" to continue.
+              Please like the video, subscribe to the channel, and comment to continue.
             </p>
 
             <div className="flex gap-3 mb-4">
@@ -145,6 +139,7 @@ export default function App() {
                 Verify
               </button>
 
+              {/* Skip Button */}
               <button
                 onClick={handleSkipVerification}
                 className="px-4 py-2 bg-gray-500 text-white rounded-lg"
@@ -159,22 +154,20 @@ export default function App() {
       {/* Code Modal */}
       {showCodeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full text-center">
-            <h2 className="text-xl font-bold mb-4">Your Reward Code</h2>
-            <p className="mb-4 text-lg">
-              {rewards[selectedTab].find((r) => r.id === selectedReward)?.code}
-            </p>
-            <button
-              onClick={() =>
-                handleCopyCode(rewards[selectedTab].find((r) => r.id === selectedReward)?.code || '')
-              }
-              className="px-4 py-2 bg-green-500 text-white rounded-lg"
-            >
-              {codeCopied ? 'Copied!' : 'Copy Code'}
-            </button>
+          <div className="bg-white text-black p-6 rounded-lg shadow-lg max-w-lg w-full">
+            <h2 className="text-xl font-bold mb-4">Your Code</h2>
+            <div className="bg-gray-200 p-3 rounded-lg flex justify-between items-center">
+              <span>{rewards[selectedTab].find(r => r.name === selectedReward)?.code}</span>
+              <button
+                onClick={handleCopyCode}
+                className="bg-blue-500 text-white px-3 py-1 rounded-lg"
+              >
+                {codeCopied ? 'Copied!' : 'Copy'}
+              </button>
+            </div>
             <button
               onClick={() => setShowCodeModal(false)}
-              className="ml-3 px-4 py-2 bg-gray-500 text-white rounded-lg"
+              className="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg"
             >
               Close
             </button>
