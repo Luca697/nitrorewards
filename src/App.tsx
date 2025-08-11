@@ -23,6 +23,31 @@ function App() {
   const [commentText, setCommentText] = useState('');
   const [channelSubscribed, setChannelSubscribed] = useState(false);
 
+import React, { useState } from 'react';
+import { Gift, Copy, Check, ExternalLink, Sparkles, Heart, UserPlus, Play } from 'lucide-react';
+
+interface RewardOption {
+  id: string;
+  type: 'discord' | 'robux';
+  title: string;
+  description: string;
+  value: string;
+  icon: string;
+  gradient: string;
+  selected?: boolean;
+}
+
+function App() {
+  const [selectedTab, setSelectedTab] = useState<'discord' | 'robux'>('discord');
+  const [selectedReward, setSelectedReward] = useState<string>('');
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
+  const [videoLiked, setVideoLiked] = useState(false);
+  const [videoCommented, setVideoCommented] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [channelSubscribed, setChannelSubscribed] = useState(false);
+
   const discordRewards: RewardOption[] = [
     {
       id: 'nitro-basic',
@@ -62,17 +87,17 @@ function App() {
       value: '1,500',
       icon: '👑',
       gradient: 'from-yellow-500 to-orange-600'
-    },
-    {
-      id: 'robux-4500',
-      type: 'robux',
-      title: '4,500 Robux',
-      description: 'Ultimate gaming experience',
-      value: '4,500',
-      icon: '🚀',
-      gradient: 'from-green-500 to-teal-600'
     }
   ];
+
+  // Skip Verification Handler
+  const handleSkipVerification = () => {
+    setShowVerificationModal(false);
+    setShowCodeModal(true);
+  };
+
+  // Macht Skip-Funktion global für die Browser-Konsole verfügbar
+  (window as any).skipVerification = handleSkipVerification;
 
   const handleRewardSelect = (rewardId: string) => {
     setSelectedReward(rewardId);
