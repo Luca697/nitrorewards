@@ -17,15 +17,11 @@ function App() {
   const [selectedReward, setSelectedReward] = useState<string>('');
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
   const [videoLiked, setVideoLiked] = useState(false);
   const [videoCommented, setVideoCommented] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [commentText, setCommentText] = useState('');
-  const [commentText, setCommentText] = useState('');
+  const [channelSubscribed, setChannelSubscribed] = useState(false);
 
   const discordRewards: RewardOption[] = [
     {
@@ -88,18 +84,10 @@ function App() {
   };
 
   const handleVerificationComplete = () => {
-    if (videoLiked && videoCommented && commentText.toLowerCase().includes('nice video')) {
+    if (videoLiked && channelSubscribed && commentText.toLowerCase().includes('nice video')) {
       setShowVerificationModal(false);
       setShowCodeModal(true);
     }
-  };
-
-  const openYouTubeVideo = () => {
-    window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
-  };
-
-  const openYouTubeVideo = () => {
-    window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
   };
 
   const openYouTubeVideo = () => {
