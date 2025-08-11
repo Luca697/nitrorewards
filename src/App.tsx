@@ -18,9 +18,11 @@ function App() {
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
   const [videoLiked, setVideoLiked] = useState(false);
   const [videoCommented, setVideoCommented] = useState(false);
+  const [commentText, setCommentText] = useState('');
   const [commentText, setCommentText] = useState('');
 
   const discordRewards: RewardOption[] = [
@@ -88,6 +90,10 @@ function App() {
       setShowVerificationModal(false);
       setShowCodeModal(true);
     }
+  };
+
+  const openYouTubeVideo = () => {
+    window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
   };
 
   const openYouTubeVideo = () => {
